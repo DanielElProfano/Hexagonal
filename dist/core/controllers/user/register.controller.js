@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RegisterController = void 0;
 const HttpResponse_1 = require("../../interactors/HttpResponse");
 class RegisterController {
-    //crear un email validator dentro del constructor
     constructor(id, bcrypt, emailValidator, mysql, jwt) {
         this.id = id;
         this.bcrypt = bcrypt;
@@ -42,11 +41,15 @@ class RegisterController {
             };
             // All validator are ok and insert the user
             const insert = yield this.mysql.insert("user", newUser);
-            if (insert === 0) {
+            if (insert === false) {
                 return HttpResponse_1.HttpResponse.error(404, `El email ${email} ya existe`);
             }
-            const toToken = yield this.jwt.token({ id: newUser.userId, email: newUser.email });
-            return HttpResponse_1.HttpResponse.success(201, toToken);
+            this.token = {
+                token: yield this.jwt.token({ userId: newUser.userId, email: newUser.email }),
+                email,
+                userId: newUser.userId
+            };
+            return HttpResponse_1.HttpResponse.success(201, this.token);
         });
     }
 }

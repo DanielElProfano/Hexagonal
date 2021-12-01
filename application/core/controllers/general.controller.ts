@@ -8,8 +8,15 @@ export const generalController = (controller: ControllerInterface) => {
             params : req.params
         }
         const httpResponse = await controller.handle(httpRequest);
-        console.log("httpResponse", httpResponse)
-        req.session.user = httpResponse.body
+        // if token, 
+        if(httpResponse.body.token){
+            const {email, userId} = httpResponse.body
+            req.user = {
+                userId,
+                email
+            }
+            httpResponse.body = httpResponse.body.token
+        }
         res.status(httpResponse.statusCode).json(httpResponse)
     }
 }

@@ -17,8 +17,15 @@ const generalController = (controller) => {
             params: req.params
         };
         const httpResponse = yield controller.handle(httpRequest);
-        console.log("httpResponse", httpResponse);
-        req.session.user = httpResponse.body;
+        // if token, 
+        if (httpResponse.body.token) {
+            const { email, userId } = httpResponse.body;
+            req.user = {
+                userId,
+                email
+            };
+            httpResponse.body = httpResponse.body.token;
+        }
         res.status(httpResponse.statusCode).json(httpResponse);
     });
 };

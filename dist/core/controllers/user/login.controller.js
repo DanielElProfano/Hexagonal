@@ -11,9 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoginController = void 0;
 const HttpResponse_1 = require("../../interactors/HttpResponse");
-const saveUser_1 = require("../../middleware/saveUser");
 class LoginController {
-    //crear un email validator dentro del constructor
     constructor(id, bcrypt, mysql, jwt) {
         this.id = id;
         this.bcrypt = bcrypt;
@@ -33,19 +31,19 @@ class LoginController {
             if (!user) {
                 return HttpResponse_1.HttpResponse.error(403, 'Password o email incorrecto');
             }
-            const { id, email, password } = user[0];
+            const { userId, email, password } = user[0];
             const equals = yield this.bcrypt.deCrypt(httpRequest.body.password, password);
             if (!equals) {
                 return HttpResponse_1.HttpResponse.error(403, 'Password o email incorrecto');
             }
-            const token = yield this.jwt.token({ id, email });
-            const userLogin = (0, saveUser_1.saveUser)({ id, email });
-            return HttpResponse_1.HttpResponse.success(202, token);
+            this.token = {
+                token: yield this.jwt.token({ userId, email }),
+                email,
+                userId
+            };
+            return HttpResponse_1.HttpResponse.success(202, this.token);
         });
     }
 }
 exports.LoginController = LoginController;
-function saveuser(arg0) {
-    throw new Error("Function not implemented.");
-}
 //# sourceMappingURL=login.controller.js.map

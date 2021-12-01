@@ -52,7 +52,7 @@ class Storage {
                 this.connection.query(`INSERT INTO ${table} SET ?`, data, (err, result) => {
                     if (err) {
                         if (err.code === 'ER_DUP_ENTRY') {
-                            return resolve(true);
+                            return resolve(false);
                         }
                     }
                     console.log("result: ", result.affectedRows);

@@ -3,10 +3,12 @@ import { HttpResponse } from "../../interactors/HttpResponse";
 import { DeCryptInterface } from "../../interfaces/bcrypt";
 import { ControllerInterface } from "../../interfaces/controller";
 import { jwtInterface } from "../../interfaces/jwt-token";
-import { saveUser } from "../../middleware/saveUser";
+import { tokenInterface } from "../../interfaces/token";
 
 export class LoginController implements ControllerInterface{
     //crear un email validator dentro del constructor
+    private token : tokenInterface;
+
     constructor(
         private readonly id: idInterface,
         private readonly bcrypt : DeCryptInterface,
@@ -28,19 +30,19 @@ export class LoginController implements ControllerInterface{
         if(!user){
             return HttpResponse.error(403, 'Password o email incorrecto')
         }
-        const { id, email, password } = user[0];
+        const { userId, email, password } = user[0];
         const equals = await this.bcrypt.deCrypt(httpRequest.body.password, password)
         if(!equals){
             return HttpResponse.error(403, 'Password o email incorrecto')
         }
-        const token = await this.jwt.token({id, email});
-        const userLogin = saveUser({id, email})
-        return HttpResponse.success(202, token)
+        this.token = {
+            token : await this.jwt.token({userId, email}),
+            email,
+            userId
+        }
+        return HttpResponse.success(202, this.token)
     }
 
     // usar el servicio del jwt para verificar la password
 }
 
-function saveuser(arg0: { id: any; email: any; }) {
-    throw new Error("Function not implemented.");
-}

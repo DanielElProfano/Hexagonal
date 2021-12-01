@@ -4,6 +4,7 @@ exports.authorizationMiddleware = void 0;
 const jwt_adapter_1 = require("../utils-adapters/jwt.adapter");
 const authorizationMiddleware = (req, res, next) => {
     //decodificar el header
+    console.log("req.user", req.user);
     const authorization = req.headers.authorization || ''; //guardo el header.authorization
     const token = getToken(authorization);
     const Jwt = new jwt_adapter_1.JwtAdapter('secret');

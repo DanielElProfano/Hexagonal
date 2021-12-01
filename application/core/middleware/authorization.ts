@@ -3,6 +3,7 @@ import { JwtAdapter } from "../utils-adapters/jwt.adapter";
 
 export const authorizationMiddleware = (req : Request, res: Response, next: NextFunction) => {
      //decodificar el header
+     console.log("req.user", req.user)
     const authorization = req.headers.authorization || '';//guardo el header.authorization
     const token = getToken(authorization)
     const Jwt = new JwtAdapter('secret')
