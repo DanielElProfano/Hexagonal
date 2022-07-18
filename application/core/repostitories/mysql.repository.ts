@@ -10,7 +10,8 @@ export default class Storage {
         {
             user : 'root',
             database : 'recify',
-            host : 'localhost'
+            host : 'localhost',
+            password: 'password'
         })
     }
  

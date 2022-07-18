@@ -11,18 +11,21 @@ export const mysqlSession = {
     saveUninitialized: false,
     store : new MySqlStore({ expiration: 360000,
         schema: {
-            tableName: 'sessions',
+            tableName: 'sessiones',
             columnNames: {
-            session_id: 'session_id',
-            expires: 'expires',
-            data: 'data'
+                session_id: 'session_id',
+                expires: 'expires',
+                data: 'data'
             }
         }
-    }, mysql.createConnection({
+    }, 
+    mysql.createConnection({
         user : process.env.DB_USER,
         database : process.env.DB_NAME,
-        host : process.env.DB_HOST
-    })),
+        host : process.env.DB_HOST,
+        password: 'password'
+    })
+    ),
     cookie:  {
         secure: false,
         maxAge: 60000

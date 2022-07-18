@@ -18,7 +18,8 @@ class Storage {
         this.connection = mysql_1.default.createConnection({
             user: 'root',
             database: 'recify',
-            host: 'localhost'
+            host: 'localhost',
+            password: 'password'
         });
     }
     getList(table) {
