@@ -1,6 +1,5 @@
 export const logoutController = (req, res, next) => {
     {
-        console.log("logout");
         req.session.destroy((err) => {
             if (err) {
                 console.log("ha habido un error al destruir la sesion")

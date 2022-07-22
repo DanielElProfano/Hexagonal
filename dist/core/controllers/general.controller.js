@@ -16,16 +16,11 @@ const generalController = (controller) => {
             body: req.body,
             params: req.params
         };
-        console.log(req.body);
-        const httpResponse = yield controller.handle(httpRequest);
+        const httpResponse = yield controller.handle(httpRequest, req);
         // if token, 
-        if (httpResponse === null || httpResponse === void 0 ? void 0 : httpResponse.body.token) {
+        if (httpResponse.body.token) {
             const { email, userId } = httpResponse.body;
-            req.user = {
-                userId,
-                email
-            };
-            req.session.data = {
+            req.session.user = {
                 userId,
                 email
             };

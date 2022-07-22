@@ -16,8 +16,9 @@ class GetAllPostController {
         this.mysql = mysql;
         this.mysql = mysql;
     }
-    handle(httpRequest) {
+    handle(httpRequest, req) {
         return __awaiter(this, void 0, void 0, function* () {
+            const { userId } = req.session.user;
             const expectedFields = ['userId'];
             for (const field of expectedFields) {
                 if (!httpRequest.body[field]) {
@@ -25,17 +26,11 @@ class GetAllPostController {
                 }
             }
             try {
-                const allPost = yield this.mysql.getBy('post', 'userId', httpRequest.body.userId);
+                const allPost = yield this.mysql.getBy('post', 'userId', userId);
                 if (!allPost) {
                     return HttpResponse_1.HttpResponse.error(401, "Error in BBDD");
                 }
-                //ejecución de las promesas en pararelo para optimizar datos.
-                const arrayPost = yield Promise.all(allPost.map((element) => __awaiter(this, void 0, void 0, function* () {
-                    const allComments = yield this.mysql.getBy('comment', 'postId', element.postId);
-                    element.commentsArray = allComments;
-                    return element;
-                })));
-                return HttpResponse_1.HttpResponse.success(200, arrayPost);
+                return HttpResponse_1.HttpResponse.success(200, allPost);
             }
             catch (error) {
                 return HttpResponse_1.HttpResponse.error(500, "error en acceso a BBDD");

@@ -7,16 +7,11 @@ export const generalController = (controller: ControllerInterface) => {
             body : req.body,
             params : req.params
         }
-        console.log(req.body)
-        const httpResponse = await controller.handle(httpRequest);
+        const httpResponse = await controller.handle(httpRequest, req);
         // if token, 
-        if(httpResponse?.body.token){
+        if(httpResponse.body.token){
             const {email, userId} = httpResponse.body
-            req.user = {
-                userId,
-                email
-            }
-            req.session.data = {
+            req.session.user = {
                 userId,
                 email
             }

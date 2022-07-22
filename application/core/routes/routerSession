@@ -1,0 +1,10 @@
+import { Router } from 'express'
+import { checkSessionController } from '../middleware/checkSession.controller'
+
+const router = Router()
+
+router
+    .get('/', checkSessionController)
+
+
+export default router

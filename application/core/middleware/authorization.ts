@@ -3,16 +3,19 @@ import { JwtAdapter } from "../utils-adapters/jwt.adapter";
 
 export const authorizationMiddleware = (req : Request, res: Response, next: NextFunction) => {
      //decodificar el header
-     console.log("req.user", req.user)
     const authorization = req.headers.authorization || '';//guardo el header.authorization
     const token = getToken(authorization)
     const Jwt = new JwtAdapter('secret')
     const decodeToken = Jwt.verifyToken(token)  
-    console.log("decodeTke: ", decodeToken)
     if(decodeToken === false){
         return res.json('Token no válido')
     }
-    next();
+    // compare user token with user in the session
+    if( req.session.user.userId === decodeToken.value.userId){
+        next()
+    }else{
+        return res.json('Este token es de otra session')
+    }
     
     function getToken(auth){
         // Bearer token;
@@ -25,6 +28,7 @@ export const authorizationMiddleware = (req : Request, res: Response, next: Next
             console.log(' Formato inválido');
         }
         let token = auth.replace('Bearer ', '');
+        console.log("Llega el token del cliente", token)
         return token;
     }
 }

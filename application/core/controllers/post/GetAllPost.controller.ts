@@ -8,7 +8,8 @@ export class GetAllPostController implements ControllerInterface {
             this.mysql = mysql;
         }
 
-    async handle (httpRequest) {
+    async handle (httpRequest, req) {
+        const { userId } = req.session.user
         const expectedFields = ['userId']
         for( const field of expectedFields){
             if(!httpRequest.body[field]){
@@ -16,17 +17,11 @@ export class GetAllPostController implements ControllerInterface {
             }
         }
         try{
-            const allPost = await this.mysql.getBy('post', 'userId', httpRequest.body.userId)
+            const allPost = await this.mysql.getBy('post', 'userId', userId)
             if(!allPost){
                 return HttpResponse.error(401,"Error in BBDD")
             }       
-            //ejecución de las promesas en pararelo para optimizar datos.
-            const arrayPost = await Promise.all(allPost.map(async element => {
-                const allComments = await this.mysql.getBy('comment','postId', element.postId)
-                element.commentsArray = allComments
-                return element
-            }));
-            return HttpResponse.success(200, arrayPost)
+            return HttpResponse.success(200, allPost)
             }
         catch(error){
         return HttpResponse.error(500, "error en acceso a BBDD")
